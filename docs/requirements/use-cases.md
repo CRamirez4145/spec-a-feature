@@ -127,9 +127,10 @@ The note below is **not** the catalog. It records scope context only: a few Proj
 7. The system checks whether each selected student may receive another reminder under BR-reminder-frequency.
 8. The system asks the instructor to confirm sending the reminders.
 9. The instructor confirms.
-10. The system sends each eligible selected student a reminder identifying the artifact she has not submitted and the applicable week.
-11. The system informs the instructor which reminders were sent successfully.
-12. Use case ends.
+10. Immediately before sending each reminder, the system rechecks that the student is still eligible, the artifact is still missing, and the reminder is still allowed under BR-reminder-frequency.
+11. The system sends each still-eligible selected student a reminder identifying the missing artifact and applicable week.
+12. The system informs the instructor which reminders were sent successfully.
+13. Use case ends.
 
 **Extensions:**
 - **3a. A student has already submitted the currently due artifact:**
@@ -166,10 +167,15 @@ The note below is **not** the catalog. It records scope context only: a few Proj
   - 7a2. The system informs the instructor that the student has already been reminded.
   - 7a3. The system continues processing the other selected students.
 
-- **10a. The mail server rejects a student's email address or another email delivery error occurs:**
-  - 10a1. The system records the failed reminder delivery.
-  - 10a2. The system continues attempting reminders for the remaining selected students.
-  - 10a3. After processing the selected students, the system informs the instructor which reminders failed.
+- **10a. A selected student is no longer eligible for the reminder:**
+  - 10a1. The system does not send the reminder to that student.
+  - 10a2. The system informs the instructor that the student's status changed after the list was displayed.
+  - 10a3. The system continues processing the remaining selected students.
+
+- **11a. The mail server rejects a student's email address or another email delivery error occurs:**
+  - 11a1. The system records the failed reminder delivery.
+  - 11a2. The system continues attempting reminders for the remaining selected students.
+  - 11a3. After processing the selected students, the system informs the instructor which reminders failed.
 
 **Priority:** High
 
@@ -187,6 +193,7 @@ Non-submitter determination:
 - A student who submitted before the reminder is generated is not a non-submitter for that artifact.
 - A student whose submission no longer exists is treated as a non-submitter, subject to the eligibility rules in the Extensions.
 - Only students within a course section assigned to the instructor may be displayed (BR-section-scoped-access).
+- For a weekly activity report, a student is considered to have submitted for the applicable week when at least one current activity authored by that student exists for that week. If no current activity exists for that student and week, the weekly activity report is considered missing.
 
 Reminder contents:
 - Student first name.
